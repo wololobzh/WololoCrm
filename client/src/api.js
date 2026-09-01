@@ -67,3 +67,21 @@ export function updateUser(id, data) {
     body: JSON.stringify(data),
   });
 }
+
+export function listPromotions() {
+  return request("/promotions");
+}
+
+export function createPromotion(data) {
+  return request("/promotions", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function updatePromotion(id, data) {
+  return request(`/promotions/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}

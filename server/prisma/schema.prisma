@@ -18,6 +18,8 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
+  managedPromotions Promotion[]
+
   @@map("users")
 }
 
@@ -29,6 +31,26 @@ model Campus {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  promotions Promotion[]
+
   @@map("campuses")
 }
+
+model Promotion {
+  id             String    @id @default(uuid())
+  name           String
+  campusId       String    @map("campus_id")
+  managerUserId  String    @map("manager_user_id")
+  startDate      DateTime? @map("start_date")
+  endDate        DateTime? @map("end_date")
+  isActive       Boolean   @default(true) @map("is_active")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  campus  Campus @relation(fields: [campusId], references: [id])
+  manager User   @relation(fields: [managerUserId], references: [id])
+
+  @@map("promotions")
+}
+
 
