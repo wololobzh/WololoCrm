@@ -31,3 +31,21 @@ export function login(email, password) {
 export function getMe() {
   return request("/auth/me");
 }
+
+export function listCampuses() {
+  return request("/campuses");
+}
+
+export function createCampus(data) {
+  return request("/campuses", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateCampus(id, data) {
+  return request(`/campuses/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}

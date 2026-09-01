@@ -29,8 +29,9 @@ password : admin1234
 
 ## Statut actuel
 
-Socle technique et authentification uniquement (login + `/api/auth/me`).
-La gestion des campus, promotions, apprenants, compétences et commentaires
+Socle technique, authentification (login + `/api/auth/me`) et gestion des
+campus (CRUD + activation/désactivation).
+La gestion des promotions, apprenants, compétences et commentaires
 n'est pas encore implémentée.
 
 ## Développement sans Docker

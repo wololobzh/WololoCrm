@@ -1,6 +1,7 @@
 node_modules/
 data/*.db
 data/*.db-journal
+server/data/
 .env
 !*.env.example
 dist/
