@@ -7,7 +7,12 @@ import {
   listSkills,
   assignSkill,
   removeSkill,
+  addComment,
+  updateComment,
+  deleteComment,
 } from "../api.js";
+
+const COMMENT_STATUSES = ["INFO", "TODO", "IMPORTANT", "DONE"];
 
 export default function StudentDetail({ studentId, onBack }) {
   const [student, setStudent] = useState(null);
@@ -19,6 +24,11 @@ export default function StudentDetail({ studentId, onBack }) {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(null);
+  const [newCommentContent, setNewCommentContent] = useState("");
+  const [newCommentStatus, setNewCommentStatus] = useState("INFO");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editCommentContent, setEditCommentContent] = useState("");
+  const [editCommentStatus, setEditCommentStatus] = useState("INFO");
 
   function load() {
     setLoading(true);
@@ -67,6 +77,50 @@ export default function StudentDetail({ studentId, onBack }) {
 
     try {
       await removeSkill(studentId, skillId);
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function handleAddComment(e) {
+    e.preventDefault();
+    if (!newCommentContent) return;
+    setError("");
+
+    try {
+      await addComment(studentId, { content: newCommentContent, status: newCommentStatus });
+      setNewCommentContent("");
+      setNewCommentStatus("INFO");
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  function startEditComment(comment) {
+    setEditingCommentId(comment.id);
+    setEditCommentContent(comment.content);
+    setEditCommentStatus(comment.status);
+  }
+
+  async function handleSaveComment(id) {
+    setError("");
+
+    try {
+      await updateComment(id, { content: editCommentContent, status: editCommentStatus });
+      setEditingCommentId(null);
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function handleDeleteComment(id) {
+    setError("");
+
+    try {
+      await deleteComment(id);
       load();
     } catch (err) {
       setError(err.message);
@@ -283,6 +337,64 @@ export default function StudentDetail({ studentId, onBack }) {
         <button type="button" onClick={handleAddSkill}>
           Ajouter
         </button>
+      </div>
+
+      <h2>Commentaires</h2>
+      <form onSubmit={handleAddComment} className="inline-form">
+        <div className="field">
+          <label>Statut</label>
+          <select value={newCommentStatus} onChange={(e) => setNewCommentStatus(e.target.value)}>
+            {COMMENT_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="field">
+          <label>Commentaire</label>
+          <input
+            value={newCommentContent}
+            onChange={(e) => setNewCommentContent(e.target.value)}
+            placeholder="Ajouter un commentaire"
+            required
+          />
+        </div>
+        <button type="submit">Ajouter</button>
+      </form>
+
+      <div className="comment-list">
+        {(form.comments || []).map((comment) => (
+          <div key={comment.id} className="comment-item">
+            {editingCommentId === comment.id ? (
+              <>
+                <select value={editCommentStatus} onChange={(e) => setEditCommentStatus(e.target.value)}>
+                  {COMMENT_STATUSES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+                <input value={editCommentContent} onChange={(e) => setEditCommentContent(e.target.value)} />
+                <button onClick={() => handleSaveComment(comment.id)}>Enregistrer</button>
+                <button onClick={() => setEditingCommentId(null)}>Annuler</button>
+              </>
+            ) : (
+              <>
+                <div className="comment-header">
+                  <span className="comment-status">{comment.status}</span>
+                  <span>
+                    {comment.author?.firstname} {comment.author?.lastname} —{" "}
+                    {new Date(comment.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <p>{comment.content}</p>
+                <button onClick={() => startEditComment(comment)}>Modifier</button>
+                <button onClick={() => handleDeleteComment(comment.id)}>Supprimer</button>
+              </>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

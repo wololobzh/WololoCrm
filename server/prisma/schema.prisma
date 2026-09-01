@@ -19,6 +19,7 @@ model User {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   managedPromotions Promotion[]
+  comments          Comment[]
 
   @@map("users")
 }
@@ -83,6 +84,7 @@ model Student {
   promotion Promotion @relation(fields: [promotionId], references: [id])
 
   studentSkills StudentSkill[]
+  comments      Comment[]
 
   @@map("students")
 }
@@ -111,6 +113,21 @@ model StudentSkill {
 
   @@unique([studentId, skillId])
   @@map("student_skills")
+}
+
+model Comment {
+  id            String   @id @default(uuid())
+  studentId     String   @map("student_id")
+  authorUserId  String   @map("author_user_id")
+  content       String
+  status        String   @default("INFO")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  student Student @relation(fields: [studentId], references: [id])
+  author  User    @relation(fields: [authorUserId], references: [id])
+
+  @@map("comments")
 }
 
 

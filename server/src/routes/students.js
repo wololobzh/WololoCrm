@@ -20,13 +20,25 @@ function toPublicManager(user) {
 }
 
 function toPublicStudent(student) {
-  const { promotion, studentSkills, ...rest } = student;
+  const { promotion, studentSkills, comments, ...rest } = student;
   return {
     ...rest,
     promotion: promotion
       ? { ...promotion, manager: toPublicManager(promotion.manager) }
       : undefined,
     ...(studentSkills ? { skills: studentSkills.map((s) => s.skill) } : {}),
+    ...(comments
+      ? {
+          comments: comments.map((c) => ({
+            id: c.id,
+            content: c.content,
+            status: c.status,
+            createdAt: c.createdAt,
+            updatedAt: c.updatedAt,
+            author: toPublicManager(c.author),
+          })),
+        }
+      : {}),
   };
 }
 
@@ -34,6 +46,7 @@ const STUDENT_INCLUDE = {
   campus: true,
   promotion: { include: { manager: true } },
   studentSkills: { include: { skill: true } },
+  comments: { include: { author: true }, orderBy: { createdAt: "desc" } },
 };
 
 async function validateStudentRefs({ campusId, promotionId }, details) {
