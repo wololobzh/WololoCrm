@@ -4,12 +4,15 @@ import Home from "./pages/Home.jsx";
 import Campuses from "./pages/Campuses.jsx";
 import Users from "./pages/Users.jsx";
 import Promotions from "./pages/Promotions.jsx";
+import Students from "./pages/Students.jsx";
+import StudentDetail from "./pages/StudentDetail.jsx";
 import { getMe } from "./api.js";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [checking, setChecking] = useState(true);
   const [view, setView] = useState("home");
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -50,6 +53,22 @@ export default function App() {
     return <Promotions onBack={() => setView("home")} />;
   }
 
+  if (view === "students") {
+    return (
+      <Students
+        onBack={() => setView("home")}
+        onOpenStudent={(id) => {
+          setSelectedStudentId(id);
+          setView("studentDetail");
+        }}
+      />
+    );
+  }
+
+  if (view === "studentDetail") {
+    return <StudentDetail studentId={selectedStudentId} onBack={() => setView("students")} />;
+  }
+
   return (
     <Home
       user={user}
@@ -57,6 +76,7 @@ export default function App() {
       onNavigateCampuses={() => setView("campuses")}
       onNavigateUsers={() => setView("users")}
       onNavigatePromotions={() => setView("promotions")}
+      onNavigateStudents={() => setView("students")}
     />
   );
 }

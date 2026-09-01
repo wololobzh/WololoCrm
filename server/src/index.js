@@ -9,6 +9,7 @@ const authRoutes = require("./routes/auth");
 const campusesRoutes = require("./routes/campuses");
 const usersRoutes = require("./routes/users");
 const promotionsRoutes = require("./routes/promotions");
+const studentsRoutes = require("./routes/students");
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/campuses", campusesRoutes);
 app.use("/api/promotions", promotionsRoutes);
+app.use("/api/students", studentsRoutes);
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {

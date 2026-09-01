@@ -32,6 +32,7 @@ model Campus {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   promotions Promotion[]
+  students   Student[]
 
   @@map("campuses")
 }
@@ -49,8 +50,39 @@ model Promotion {
 
   campus  Campus @relation(fields: [campusId], references: [id])
   manager User   @relation(fields: [managerUserId], references: [id])
+  students Student[]
 
   @@map("promotions")
+}
+
+model Student {
+  id           String   @id @default(uuid())
+  firstname    String
+  lastname     String
+  phone        String?
+  email        String?  @unique
+  discordLogin String?  @map("discord_login")
+  city         String?
+
+  campusId     String   @map("campus_id")
+  promotionId  String   @map("promotion_id")
+
+  isAlerte                   Boolean @default(false) @map("is_alerte")
+  isAbandon                  Boolean @default(false) @map("is_abandon")
+  isHyppoRefused             Boolean @default(false) @map("is_hyppo_refused")
+  isHyppoAccepted            Boolean @default(false) @map("is_hyppo_accepted")
+  isFinancementOk            Boolean @default(false) @map("is_financement_ok")
+  isAdminStatusOk            Boolean @default(false) @map("is_admin_status_ok")
+  isMaterialSetupOk          Boolean @default(false) @map("is_material_setup_ok")
+  isEmployabilityInitialised Boolean @default(false) @map("is_employability_initialised")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  campus    Campus    @relation(fields: [campusId], references: [id])
+  promotion Promotion @relation(fields: [promotionId], references: [id])
+
+  @@map("students")
 }
 
 
