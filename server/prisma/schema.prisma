@@ -82,7 +82,35 @@ model Student {
   campus    Campus    @relation(fields: [campusId], references: [id])
   promotion Promotion @relation(fields: [promotionId], references: [id])
 
+  studentSkills StudentSkill[]
+
   @@map("students")
+}
+
+model Skill {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  studentSkills StudentSkill[]
+
+  @@map("skills")
+}
+
+model StudentSkill {
+  id        String   @id @default(uuid())
+  studentId String   @map("student_id")
+  skillId   String   @map("skill_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  student Student @relation(fields: [studentId], references: [id])
+  skill   Skill   @relation(fields: [skillId], references: [id])
+
+  @@unique([studentId, skillId])
+  @@map("student_skills")
 }
 
 

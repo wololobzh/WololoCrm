@@ -110,3 +110,29 @@ export function updateStudent(id, data) {
     body: JSON.stringify(data),
   });
 }
+
+export function listSkills() {
+  return request("/skills");
+}
+
+export function createSkill(data) {
+  return request("/skills", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateSkill(id, data) {
+  return request(`/skills/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export function assignSkill(studentId, skillId) {
+  return request(`/students/${studentId}/skills/${skillId}`, { method: "POST" });
+}
+
+export function removeSkill(studentId, skillId) {
+  return request(`/students/${studentId}/skills/${skillId}`, { method: "DELETE" });
+}
