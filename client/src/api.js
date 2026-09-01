@@ -85,3 +85,28 @@ export function updatePromotion(id, data) {
     body: JSON.stringify(data),
   });
 }
+
+export function listStudents(params = {}) {
+  const query = new URLSearchParams(
+    Object.fromEntries(Object.entries(params).filter(([, v]) => v))
+  ).toString();
+  return request(`/students${query ? `?${query}` : ""}`);
+}
+
+export function getStudent(id) {
+  return request(`/students/${id}`);
+}
+
+export function createStudent(data) {
+  return request("/students", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateStudent(id, data) {
+  return request(`/students/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
