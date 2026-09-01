@@ -113,3 +113,30 @@ td button {
   align-items: center;
   gap: 0.4rem;
 }
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  background: #e0e7ff;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+.skill-tag button {
+  background: none;
+  border: none;
+  color: #1e3a8a;
+  padding: 0;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}

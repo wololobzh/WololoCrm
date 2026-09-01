@@ -6,6 +6,7 @@ import Users from "./pages/Users.jsx";
 import Promotions from "./pages/Promotions.jsx";
 import Students from "./pages/Students.jsx";
 import StudentDetail from "./pages/StudentDetail.jsx";
+import Skills from "./pages/Skills.jsx";
 import { getMe } from "./api.js";
 
 export default function App() {
@@ -69,6 +70,10 @@ export default function App() {
     return <StudentDetail studentId={selectedStudentId} onBack={() => setView("students")} />;
   }
 
+  if (view === "skills") {
+    return <Skills onBack={() => setView("home")} />;
+  }
+
   return (
     <Home
       user={user}
@@ -77,6 +82,7 @@ export default function App() {
       onNavigateUsers={() => setView("users")}
       onNavigatePromotions={() => setView("promotions")}
       onNavigateStudents={() => setView("students")}
+      onNavigateSkills={() => setView("skills")}
     />
   );
 }

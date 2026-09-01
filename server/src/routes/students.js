@@ -20,18 +20,20 @@ function toPublicManager(user) {
 }
 
 function toPublicStudent(student) {
-  const { promotion, ...rest } = student;
+  const { promotion, studentSkills, ...rest } = student;
   return {
     ...rest,
     promotion: promotion
       ? { ...promotion, manager: toPublicManager(promotion.manager) }
       : undefined,
+    ...(studentSkills ? { skills: studentSkills.map((s) => s.skill) } : {}),
   };
 }
 
 const STUDENT_INCLUDE = {
   campus: true,
   promotion: { include: { manager: true } },
+  studentSkills: { include: { skill: true } },
 };
 
 async function validateStudentRefs({ campusId, promotionId }, details) {
@@ -406,6 +408,98 @@ router.delete("/:id", async (req, res) => {
   }
 
   await prisma.student.delete({ where: { id: req.params.id } });
+
+  res.status(204).send();
+});
+
+/**
+ * @openapi
+ * /api/students/{studentId}/skills/{skillId}:
+ *   post:
+ *     summary: Assign a skill to a student
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: skillId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       201:
+ *         description: Skill assigned
+ *       404:
+ *         description: Student or skill not found
+ *       409:
+ *         description: Skill already assigned to this student
+ */
+router.post("/:studentId/skills/:skillId", async (req, res) => {
+  const { studentId, skillId } = req.params;
+
+  const student = await prisma.student.findUnique({ where: { id: studentId } });
+  if (!student) {
+    return res.status(404).json({ error: "Student not found" });
+  }
+
+  const skill = await prisma.skill.findUnique({ where: { id: skillId } });
+  if (!skill) {
+    return res.status(404).json({ error: "Skill not found" });
+  }
+
+  const existing = await prisma.studentSkill.findUnique({
+    where: { studentId_skillId: { studentId, skillId } },
+  });
+  if (existing) {
+    return res.status(409).json({ error: "Skill already assigned to this student" });
+  }
+
+  await prisma.studentSkill.create({ data: { studentId, skillId } });
+
+  res.status(201).json(skill);
+});
+
+/**
+ * @openapi
+ * /api/students/{studentId}/skills/{skillId}:
+ *   delete:
+ *     summary: Remove a skill from a student
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: skillId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Skill removed
+ *       404:
+ *         description: Assignment not found
+ */
+router.delete("/:studentId/skills/:skillId", async (req, res) => {
+  const { studentId, skillId } = req.params;
+
+  const existing = await prisma.studentSkill.findUnique({
+    where: { studentId_skillId: { studentId, skillId } },
+  });
+  if (!existing) {
+    return res.status(404).json({ error: "Assignment not found" });
+  }
+
+  await prisma.studentSkill.delete({ where: { studentId_skillId: { studentId, skillId } } });
 
   res.status(204).send();
 });

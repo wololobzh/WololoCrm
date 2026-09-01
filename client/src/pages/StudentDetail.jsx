@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
-import { getStudent, updateStudent, listCampuses, listPromotions } from "../api.js";
+import {
+  getStudent,
+  updateStudent,
+  listCampuses,
+  listPromotions,
+  listSkills,
+  assignSkill,
+  removeSkill,
+} from "../api.js";
 
 export default function StudentDetail({ studentId, onBack }) {
   const [student, setStudent] = useState(null);
   const [campuses, setCampuses] = useState([]);
   const [promotions, setPromotions] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [skillToAdd, setSkillToAdd] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -12,12 +22,13 @@ export default function StudentDetail({ studentId, onBack }) {
 
   function load() {
     setLoading(true);
-    Promise.all([getStudent(studentId), listCampuses(), listPromotions()])
-      .then(([s, camps, promos]) => {
+    Promise.all([getStudent(studentId), listCampuses(), listPromotions(), listSkills()])
+      .then(([s, camps, promos, allSkills]) => {
         setStudent(s);
         setForm(s);
         setCampuses(camps);
         setPromotions(promos);
+        setSkills(allSkills);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -36,6 +47,30 @@ export default function StudentDetail({ studentId, onBack }) {
       isHyppoAccepted: field === "isHyppoAccepted" ? value : value ? false : prev.isHyppoAccepted,
       isHyppoRefused: field === "isHyppoRefused" ? value : value ? false : prev.isHyppoRefused,
     }));
+  }
+
+  async function handleAddSkill() {
+    if (!skillToAdd) return;
+    setError("");
+
+    try {
+      await assignSkill(studentId, skillToAdd);
+      setSkillToAdd("");
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function handleRemoveSkill(skillId) {
+    setError("");
+
+    try {
+      await removeSkill(studentId, skillId);
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   async function handleSave(e) {
@@ -219,6 +254,36 @@ export default function StudentDetail({ studentId, onBack }) {
           {saving ? "Enregistrement..." : "Enregistrer"}
         </button>
       </form>
+
+      <h2>Compétences</h2>
+      <div className="skill-tags">
+        {(form.skills || []).map((skill) => (
+          <span key={skill.id} className="skill-tag">
+            {skill.name}
+            <button type="button" onClick={() => handleRemoveSkill(skill.id)}>
+              ×
+            </button>
+          </span>
+        ))}
+      </div>
+      <div className="inline-form">
+        <div className="field">
+          <label>Ajouter une compétence</label>
+          <select value={skillToAdd} onChange={(e) => setSkillToAdd(e.target.value)}>
+            <option value="">-</option>
+            {skills
+              .filter((s) => s.isActive && !(form.skills || []).some((fs) => fs.id === s.id))
+              .map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+          </select>
+        </div>
+        <button type="button" onClick={handleAddSkill}>
+          Ajouter
+        </button>
+      </div>
     </div>
   );
 }

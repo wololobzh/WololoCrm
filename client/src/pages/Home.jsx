@@ -5,6 +5,7 @@ export default function Home({
   onNavigateUsers,
   onNavigatePromotions,
   onNavigateStudents,
+  onNavigateSkills,
 }) {
   return (
     <div className="page">
@@ -22,6 +23,7 @@ export default function Home({
         <button onClick={onNavigateUsers}>Gérer les utilisateurs</button>
         <button onClick={onNavigatePromotions}>Gérer les promotions</button>
         <button onClick={onNavigateStudents}>Gérer les apprenants</button>
+        <button onClick={onNavigateSkills}>Gérer les compétences</button>
       </div>
     </div>
   );
