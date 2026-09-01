@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import Login from "./pages/Login.jsx";
 import Home from "./pages/Home.jsx";
+import Campuses from "./pages/Campuses.jsx";
 import { getMe } from "./api.js";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [checking, setChecking] = useState(true);
+  const [view, setView] = useState("home");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -23,6 +25,7 @@ export default function App() {
   function handleLogout() {
     localStorage.removeItem("token");
     setUser(null);
+    setView("home");
   }
 
   if (checking) {
@@ -33,5 +36,9 @@ export default function App() {
     return <Login onLoggedIn={setUser} />;
   }
 
-  return <Home user={user} onLogout={handleLogout} />;
+  if (view === "campuses") {
+    return <Campuses onBack={() => setView("home")} />;
+  }
+
+  return <Home user={user} onLogout={handleLogout} onNavigateCampuses={() => setView("campuses")} />;
 }

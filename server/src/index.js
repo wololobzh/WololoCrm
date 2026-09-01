@@ -6,6 +6,7 @@ const swaggerUi = require("swagger-ui-express");
 
 const swaggerSpec = require("./swagger");
 const authRoutes = require("./routes/auth");
+const campusesRoutes = require("./routes/campuses");
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/campuses", campusesRoutes);
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {

@@ -1,4 +1,4 @@
-export default function Home({ user, onLogout }) {
+export default function Home({ user, onLogout, onNavigateCampuses }) {
   return (
     <div className="page">
       <div className="top-bar">
@@ -10,6 +10,7 @@ export default function Home({ user, onLogout }) {
       </p>
       <p>Email : {user.email}</p>
       <p>Rôle : {user.role}</p>
+      <button onClick={onNavigateCampuses}>Gérer les campus</button>
     </div>
   );
 }
