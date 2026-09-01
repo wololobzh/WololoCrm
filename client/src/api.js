@@ -136,3 +136,21 @@ export function assignSkill(studentId, skillId) {
 export function removeSkill(studentId, skillId) {
   return request(`/students/${studentId}/skills/${skillId}`, { method: "DELETE" });
 }
+
+export function addComment(studentId, data) {
+  return request(`/students/${studentId}/comments`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateComment(id, data) {
+  return request(`/comments/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteComment(id) {
+  return request(`/comments/${id}`, { method: "DELETE" });
+}
