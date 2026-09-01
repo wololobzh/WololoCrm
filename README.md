@@ -29,10 +29,15 @@ password : admin1234
 
 ## Statut actuel
 
-Socle technique, authentification (login + `/api/auth/me`) et gestion des
-campus (CRUD + activation/désactivation).
-La gestion des promotions, apprenants, compétences et commentaires
-n'est pas encore implémentée.
+Toutes les fonctionnalités des spécifications sont implémentées :
+
+- authentification (login + `/api/auth/me`) ;
+- utilisateurs (CRUD, activation/désactivation) ;
+- campus (CRUD, activation/désactivation) ;
+- promotions (CRUD, rattachées à un campus et un responsable) ;
+- apprenants (CRUD, fiche complète avec statuts et Hippocamp) ;
+- compétences (catalogue + attribution/retrait sur la fiche apprenant) ;
+- commentaires (ajout/modification/suppression sur la fiche apprenant).
 
 ## Développement sans Docker
 
