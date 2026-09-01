@@ -49,3 +49,21 @@ export function updateCampus(id, data) {
     body: JSON.stringify(data),
   });
 }
+
+export function listUsers() {
+  return request("/users");
+}
+
+export function createUser(data) {
+  return request("/users", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateUser(id, data) {
+  return request(`/users/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
